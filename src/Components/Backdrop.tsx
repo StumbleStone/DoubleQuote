@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
-import { DefaultColors, elementIsChildOf } from "./Toolbox";
+import { DefaultColors, elementIsChildOf } from "../Toolbox";
 
 export interface BackdropProps {
   onClose?: () => void;

@@ -1,12 +1,20 @@
-import React from "react";
 import { Test, TestExecEvent } from "./Definitions";
+import { PossibleIssue } from "./PossibleIssue";
 import { Test_DoubleQuote } from "./Tests/Test_DoubleQuote";
 import { Test_DoubleQuote_FancyLeft } from "./Tests/Test_DoubleQuote_FancyLeft";
+import { Test_DoubleQuote_FancyLeft_Missing_Space } from "./Tests/Test_DoubleQuote_FancyLeft_Missing_Space";
 import { Test_DoubleQuote_FancyRight } from "./Tests/Test_DoubleQuote_FancyRight";
+import {
+  Test_DoubleQuote_FancyRight_Missing_Space,
+  Test_DoubleQuote_Missing_Space,
+} from "./Tests/Test_DoubleQuote_FancyRight_Missing_Space";
 import { Test_SingleQuote } from "./Tests/Test_SingleQuote";
+import {
+  Test_SingleQuote_Contraction,
+  Test_SingleQuote_Fancy_Contraction,
+} from "./Tests/Test_SingleQuote_Contraction";
 import { Test_SingleQuote_FancyLeft } from "./Tests/Test_SingleQuote_FancyLeft";
 import { Test_SingleQuote_FancyRight } from "./Tests/Test_SingleQuote_FancyRight";
-import { PossibleIssue } from "./PossibleIssue";
 
 export class TextScanner {
   tests: Test[];
@@ -16,10 +24,17 @@ export class TextScanner {
 
   constructor() {
     this.tests = [
+      Test_DoubleQuote_FancyRight_Missing_Space,
+      Test_DoubleQuote_FancyLeft_Missing_Space,
+      Test_DoubleQuote_Missing_Space,
+      Test_SingleQuote_Fancy_Contraction,
+      Test_SingleQuote_Contraction,
+
       // Test_SingleQuote,
-      // Test_DoubleQuote,
       Test_SingleQuote_FancyLeft,
       Test_SingleQuote_FancyRight,
+
+      // Test_DoubleQuote,
       Test_DoubleQuote_FancyLeft,
       Test_DoubleQuote_FancyRight,
     ];
@@ -34,6 +49,8 @@ export class TextScanner {
     this.possibleIssues.forEach((i) => i.destroy());
     this.possibleIssues = [];
 
+    const newIssues: PossibleIssue[] = [];
+
     for (let i = 0; i < len; i++) {
       const event: TestExecEvent = {
         char: text[i],
@@ -42,22 +59,27 @@ export class TextScanner {
         pos: i,
       };
 
-      this.testsEnabled.forEach((t) => {
-        const res = t.exec(event);
+      for (let test of this.testsEnabled) {
+        const res = test.exec(event);
         if (res === true) {
-          return;
+          continue;
         }
 
-        this.possibleIssues.push(
+        newIssues.push(
           new PossibleIssue({
             pos: i,
-            test: t,
+            test: test,
             context: event.char,
             issue: res.found,
             fix: res.expected,
           })
         );
-      });
+
+        // To prevent multiple tests for the same position, instead fix and rerun
+        break;
+      }
     }
+
+    this.possibleIssues = newIssues.sort((a, b) => a.pos - b.pos);
   }
 }

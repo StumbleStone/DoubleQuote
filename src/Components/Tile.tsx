@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { DefaultColors, DefaultStyles } from "./Toolbox";
+import { DefaultColors, DefaultStyles } from "../Toolbox";
 export const Tile = styled("div")`
   background-color: ${DefaultColors.Container};
   border-radius: ${DefaultStyles.BORDER_RADIUS}px;

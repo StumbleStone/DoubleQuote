@@ -1,8 +1,10 @@
-import { createRoot } from "react-dom/client";
 import styled from "@emotion/styled";
 import React, { useEffect, useState } from "react";
-import { DefaultColors, FontSizes } from "./Toolbox";
-import { PossibleIssue, PossibleIssueEvent } from "./TextScanner/PossibleIssue";
+import {
+  PossibleIssue,
+  PossibleIssueEvent,
+} from "../TextScanner/PossibleIssue";
+import { FontSizes } from "../Toolbox";
 
 export interface InfoProps {
   issues: PossibleIssue[];
@@ -23,11 +25,17 @@ export const Info: React.FC<InfoProps> = (props: InfoProps) => {
       const cb = (event: PossibleIssueEvent, issue: PossibleIssue) => {
         switch (event) {
           case PossibleIssueEvent.HOVER: {
-            if (issue.active && issue.pos === activeIssue?.pos) {
-              return;
-            }
+            setActiveIssue((prevActiveIssue: PossibleIssue | null) => {
+              if (!issue.active && prevActiveIssue?.id === issue.id) {
+                return null;
+              }
 
-            setActiveIssue(issue.active ? issue : null);
+              if (issue.active) {
+                return issue;
+              }
+
+              return prevActiveIssue;
+            });
 
             break;
           }

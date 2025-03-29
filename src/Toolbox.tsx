@@ -100,7 +100,10 @@ export const BackgroundColorFlicker = (
   }
 `;
 
+export const SpecialCharRegex: RegExp = /[\!\?\\\/\.\,\'\"\‘\’\“\”\>]/;
 export const WhitespaceRegex: RegExp = /\s/;
 export const NotWhitespaceRegex: RegExp = /[^\s]/;
 export const STARTS_WITH_NEWLINE = /^\n+/;
 export const ENDS_WITH_NEWLINE = /\n+$/;
+
+export const DEBUG_ENABLED: boolean = false;

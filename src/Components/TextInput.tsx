@@ -1,19 +1,16 @@
-import { createRoot } from "react-dom/client";
 import styled from "@emotion/styled";
 import React, {
   ChangeEvent,
-  ChangeEventHandler,
-  ReactNode,
   RefObject,
   useCallback,
   useEffect,
   useRef,
   useState,
 } from "react";
-import { DefaultColors, DefaultStyles, FontSizes } from "./Toolbox";
+import { DefaultColors, DefaultStyles, FontSizes } from "../Toolbox";
+import { Button, ButtonContainer } from "./Button";
 import { FloatingWindow } from "./FloatingWindow";
 import { Heading } from "./Heading";
-import { Button, ButtonContainer } from "./Button";
 
 export interface TextInputProps {
   className?: string;

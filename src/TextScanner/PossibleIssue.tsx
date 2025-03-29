@@ -1,7 +1,8 @@
 import React, { ReactNode, RefObject } from "react";
 import { Test } from "./Definitions";
 import styled from "@emotion/styled";
-import { DefaultColors } from "../Toolbox";
+import { DefaultColors, GenerateId } from "../Toolbox";
+import { css, keyframes } from "@emotion/react";
 
 export interface PossibleIssueOptions {
   pos: number;
@@ -31,6 +32,8 @@ export class PossibleIssue {
 
   options: PossibleIssueOptions;
 
+  readonly id: string;
+
   constructor(options: PossibleIssueOptions) {
     this.options = options;
 
@@ -41,6 +44,8 @@ export class PossibleIssue {
     this._issueHovering = false;
 
     this.listeners = [];
+
+    this.id = GenerateId();
 
     // console.log(
     //   `Found [${this.formatDisplayText(
@@ -58,6 +63,10 @@ export class PossibleIssue {
   }
 
   private formatDisplayText(text: string): string {
+    if (text === " ") {
+      return `[space]`;
+    }
+
     return text.replace(/\n/g, " ");
   }
 
@@ -144,6 +153,7 @@ export class PossibleIssue {
 namespace S {
   export const Description = styled("span")`
     color: ${DefaultColors.OffWhite};
+    white-space: pre;
   `;
 
   export const DescriptionHighlight = styled("span")<{ color: string }>`

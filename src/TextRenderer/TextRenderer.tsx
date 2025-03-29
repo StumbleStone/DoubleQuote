@@ -1,24 +1,9 @@
-import { createRoot } from "react-dom/client";
 import styled from "@emotion/styled";
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import {
-  BackgroundColorFlicker,
-  BoxShadowFlicker,
-  DefaultColors,
-  ENDS_WITH_NEWLINE,
-  FontSizes,
-  STARTS_WITH_NEWLINE,
-} from "./Toolbox";
-import { Tile } from "./Tile";
-import { PossibleIssue, PossibleIssueEvent } from "./TextScanner/PossibleIssue";
-import { useHover } from "./Hooks/useHover";
-import { css, keyframes } from "@emotion/react";
+import React, { ReactNode, useMemo, useState } from "react";
+import { PossibleIssue } from "../TextScanner/PossibleIssue";
+import { DEBUG_ENABLED, DefaultColors, FontSizes } from "../Toolbox";
+import { InlineIssueSpan } from "./InlineIssueSpan";
+import { Tile } from "../Components/Tile";
 
 export interface TextRendererProps {
   text: string;
@@ -45,7 +30,7 @@ function textBuilder(text: string, issues: PossibleIssue[]): ReactNode[] {
     );
     let issueStartPos = issue.pos - startDelta;
 
-    const endDelta = Math.min(nextIssue ? nextIssue.pos - issue.pos : 3, 3);
+    const endDelta = Math.min(nextIssue ? nextIssue.pos - 1 - issue.pos : 3, 3);
     let issueEndPos = issue.pos + endDelta;
 
     let textLeft: string = text.substring(issueStartPos, issue.pos);
@@ -69,7 +54,7 @@ function textBuilder(text: string, issues: PossibleIssue[]): ReactNode[] {
     // [1-7][8-13]
 
     let textRight: string =
-      issueEndPos <= issue.pos + 1
+      issueEndPos <= issue.pos
         ? ""
         : text.substring(issue.pos + 1, issueEndPos + 1);
     const trimmedRight = trimEndNewline(textRight);
@@ -88,7 +73,7 @@ function textBuilder(text: string, issues: PossibleIssue[]): ReactNode[] {
     prevIssueEndPos = issueEndPos;
 
     parts.push(
-      <IssueSpan
+      <InlineIssueSpan
         key={issue.pos}
         issue={issue}
         textLeft={textLeft}
@@ -97,7 +82,7 @@ function textBuilder(text: string, issues: PossibleIssue[]): ReactNode[] {
     );
   }
 
-  parts.push(<S.Text key="last">{text.substring(prevIssueEndPos)}</S.Text>);
+  parts.push(<S.Text key="last">{text.substring(prevIssueEndPos + 1)}</S.Text>);
 
   return parts;
 }
@@ -115,73 +100,16 @@ export const TextRenderer: React.FC<TextRendererProps> = (
 
   return (
     <S.Container className={className}>
-      <S.Checkbox
-        type="checkbox"
-        onChange={(ev) => {
-          setDebug(() => ev.target.checked);
-        }}
-      />
+      {DEBUG_ENABLED && (
+        <S.Checkbox
+          type="checkbox"
+          onChange={(ev) => {
+            setDebug(() => ev.target.checked);
+          }}
+        />
+      )}
       <S.scroller>{content}</S.scroller>
     </S.Container>
-  );
-};
-
-export interface IssueSpanProps {
-  issue: PossibleIssue;
-  textLeft: string;
-  textRight: string;
-}
-
-export const IssueSpan: React.FC<IssueSpanProps> = (props: IssueSpanProps) => {
-  const { issue, textLeft, textRight } = props;
-
-  const isHovering = useHover(issue.ref);
-
-  useEffect(() => {
-    issue.refHovering = isHovering;
-  }, [isHovering]);
-
-  const [issueRefHovering, setIssueRefHovering] = useState(false);
-
-  useEffect(() => {
-    const l = issue.addListener((event: PossibleIssueEvent) => {
-      switch (event) {
-        case PossibleIssueEvent.HOVER: {
-          setIssueRefHovering(issue.issueHovering);
-          break;
-        }
-        case PossibleIssueEvent.CLOSE: {
-          l();
-          break;
-        }
-      }
-    });
-
-    return () => l();
-  }, []);
-
-  const clickHighlight = useCallback(() => {
-    if (!issue.issueRef.current) {
-      return;
-    }
-
-    issue.issueRef.current.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-    });
-  }, []);
-
-  return (
-    <S.Issue
-      key={issue.pos}
-      ref={issue.ref}
-      color={issue.color}
-      isHovering={isHovering}
-      isFlickering={issueRefHovering}
-      onClick={clickHighlight}
-    >
-      {textLeft + issue.context + textRight}
-    </S.Issue>
   );
 };
 
@@ -192,6 +120,7 @@ namespace S {
     font-size: ${FontSizes.SMALL}px;
     overflow: hidden;
     padding: 0;
+    position: relative;
   `;
 
   export const scroller = styled("div")`
@@ -205,25 +134,6 @@ namespace S {
 
   export const Text = styled("span")`
     color: ${DefaultColors.OffWhite};
-  `;
-
-  export const Issue = styled("span")<{
-    isHovering: boolean;
-    isFlickering: boolean;
-    color: string;
-  }>`
-    background-color: ${(p) => (p.isHovering ? p.color : `${p.color}aa`)};
-    color: ${DefaultColors.Text_Color};
-    border-radius: 5px;
-    cursor: pointer;
-
-    animation: ${(p) =>
-      p.isFlickering
-        ? css`0.5s infinite ${BackgroundColorFlicker(
-            DefaultColors.TRANSPARENT,
-            p.color
-          )}`
-        : null};
   `;
 
   export const Checkbox = styled("input")`
