@@ -19,13 +19,15 @@ export const FixRenderer: React.FC<FixRendererProps> = (
 
   return (
     <S.Container className={className}>
-      <S.Table>
-        <tbody>
-          {issues.map((i, idx) => (
-            <IssueWidget issue={i} key={idx} />
-          ))}
-        </tbody>
-      </S.Table>
+      <S.scroller>
+        <S.Table>
+          <tbody>
+            {issues.map((i, idx) => (
+              <IssueWidget issue={i} key={idx} />
+            ))}
+          </tbody>
+        </S.Table>
+      </S.scroller>
     </S.Container>
   );
 };
@@ -33,7 +35,15 @@ export const FixRenderer: React.FC<FixRendererProps> = (
 namespace S {
   export const Container = styled(Tile)`
     background-color: ${DefaultColors.Container_Active};
-    overflow: auto;
+    overflow: hidden;
+    padding: 0;
+  `;
+
+  export const scroller = styled("div")`
+    height: 100%;
+    width: 100%;
+    overflow: scroll;
+    padding: 15px 0px;
   `;
 
   export const Table = styled("table")`

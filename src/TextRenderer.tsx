@@ -101,12 +101,12 @@ export const TextRenderer: React.FC<TextRendererProps> = (
 
   return (
     <S.Container className={className}>
-      <S.Checkbox
+      {/* <S.Checkbox
         type="checkbox"
         onChange={(ev) => {
           setDebug(() => ev.target.checked);
         }}
-      />
+      /> */}
       <S.scroller>{content}</S.scroller>
     </S.Container>
   );

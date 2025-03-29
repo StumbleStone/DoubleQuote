@@ -22,7 +22,7 @@ interface MainPageProps {}
 const MainPage: React.FC<MainPageProps> = (props: MainPageProps) => {
   const [showTextInput, setShowTextInput] = useState<boolean>(false);
 
-  const [text, setText] = useState<string>("");
+  const [text, setText] = useState<string>(debug_text);
 
   const handleSetText = useCallback((text: string) => {
     setText(text);

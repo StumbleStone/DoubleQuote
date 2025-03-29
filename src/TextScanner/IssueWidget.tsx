@@ -109,6 +109,7 @@ namespace S {
   export const Pos = styled("td")`
     text-align: right;
     padding-right: 10px;
+    padding-left: 10px;
     color: ${DefaultColors.OffWhite};
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
@@ -131,6 +132,7 @@ namespace S {
     color: ${DefaultColors.BrightGreen};
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
+    padding-right: 10px;
   `;
 
   export const Arrow = styled("td")`
