@@ -3,9 +3,8 @@ import styled from "@emotion/styled";
 import React, { useEffect, useState } from "react";
 import { DefaultColors, FontSizes } from "./Toolbox";
 import { Tile } from "./Tile";
-import { TextScanner } from "./TextScanner/TextScanner";
 import { IssueWidget } from "./TextScanner/IssueWidget";
-import { PossibleIssue } from "./TextScanner/Definitions";
+import { PossibleIssue } from "./TextScanner/PossibleIssue";
 
 export interface FixRendererProps {
   issues: PossibleIssue[];

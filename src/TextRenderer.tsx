@@ -16,7 +16,7 @@ import {
   STARTS_WITH_NEWLINE,
 } from "./Toolbox";
 import { Tile } from "./Tile";
-import { PossibleIssue } from "./TextScanner/Definitions";
+import { PossibleIssue } from "./TextScanner/PossibleIssue";
 import { useHover } from "./Hooks/useHover";
 import { css, keyframes } from "@emotion/react";
 
@@ -139,7 +139,6 @@ export const IssueSpan: React.FC<IssueSpanProps> = (props: IssueSpanProps) => {
 
   useEffect(() => {
     issue.refHovering = isHovering;
-    issue.hoverChanged();
   }, [isHovering]);
 
   const [issueRefHovering, setIssueRefHovering] = useState(false);

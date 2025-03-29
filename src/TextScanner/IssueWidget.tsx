@@ -7,9 +7,9 @@ import {
   DefaultColors,
   FontSizes,
 } from "../Toolbox";
-import { PossibleIssue } from "./Definitions";
 import { useHover } from "../Hooks/useHover";
 import { css } from "@emotion/react";
+import { PossibleIssue } from "./PossibleIssue";
 
 export interface IssueWidgetProps {
   issue: PossibleIssue;
@@ -36,7 +36,6 @@ export const IssueWidget: React.FC<IssueWidgetProps> = (
 
   useEffect(() => {
     issue.issueHovering = isHovering;
-    issue.hoverChanged();
   }, [isHovering]);
 
   const [refHovering, setRefHovering] = useState(false);
