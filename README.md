@@ -9,4 +9,4 @@ A quick checker for common syntax issues on web novel text.
 
 ## Static page
 
-The static page hosted on Github Pages can be found at:
+The static page hosted on Github Pages can be found at: https://stumblestone.github.io/DoubleQuote/
