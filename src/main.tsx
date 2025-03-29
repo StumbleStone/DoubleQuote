@@ -1,15 +1,16 @@
-import { createRoot } from "react-dom/client";
 import styled from "@emotion/styled";
 import React, { useCallback, useEffect, useState } from "react";
-import { DefaultColors, FontSizes } from "./Toolbox";
-import { Title } from "./Title";
-import { Button, ButtonContainer } from "./Button";
-import { TextInput } from "./TextInput";
-import { Tile } from "./Tile";
-import { TextRenderer } from "./TextRenderer";
-import { FixRenderer } from "./FixRenderer";
+import { createRoot } from "react-dom/client";
+import { Button, ButtonContainer } from "./Components/Button";
+import { Info } from "./TextRenderer/Info";
+import { TextInput } from "./Components/TextInput";
+import { Tile } from "./Components/Tile";
+import { Title } from "./Components/Title";
 import { debug_text } from "./debugText";
+import { FixRenderer } from "./FixRenderer";
+import { TextRenderer } from "./TextRenderer/TextRenderer";
 import { TextScanner } from "./TextScanner/TextScanner";
+import { DefaultColors, FontSizes } from "./Toolbox";
 
 function createMain() {
   const root = createRoot(document.getElementById("app")!);
@@ -21,7 +22,7 @@ interface MainPageProps {}
 const MainPage: React.FC<MainPageProps> = (props: MainPageProps) => {
   const [showTextInput, setShowTextInput] = useState<boolean>(false);
 
-  const [text, setText] = useState<string>(debug_text);
+  const [text, setText] = useState<string>("" /*debug_text*/);
 
   const handleSetText = useCallback((text: string) => {
     setText(text);
@@ -50,20 +51,23 @@ const MainPage: React.FC<MainPageProps> = (props: MainPageProps) => {
           <FixRenderer issues={issues} />
         </S.TextRenderContainer>
       )}
-      <S.StyledButtonContainer>
-        {!showTextInput && (
-          <Button onClick={() => setShowTextInput(() => true)}>
-            {text.length > 0 ? "Edit Text" : "Start Here!"}
-          </Button>
-        )}
-        {showTextInput && (
-          <TextInput
-            close={() => setShowTextInput(() => false)}
-            startingText={text}
-            setText={handleSetText}
-          />
-        )}
-      </S.StyledButtonContainer>
+      <S.ButtonAndInfoContainer>
+        <S.StyledButtonContainer>
+          {!showTextInput && (
+            <Button onClick={() => setShowTextInput(() => true)}>
+              {text.length > 0 ? "Edit Text" : "Start Here!"}
+            </Button>
+          )}
+        </S.StyledButtonContainer>
+        <Info issues={issues} />
+      </S.ButtonAndInfoContainer>
+      {showTextInput && (
+        <TextInput
+          close={() => setShowTextInput(() => false)}
+          startingText={text}
+          setText={handleSetText}
+        />
+      )}
     </S.Page>
   );
 };
@@ -81,7 +85,14 @@ namespace S {
   `;
 
   export const StyledButtonContainer = styled(ButtonContainer)`
+    flex: 1;
+  `;
+
+  export const ButtonAndInfoContainer = styled("div")`
     padding: 0px 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   `;
 
   export const TextRenderContainer = styled("div")`

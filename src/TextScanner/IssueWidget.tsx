@@ -7,9 +7,9 @@ import {
   DefaultColors,
   FontSizes,
 } from "../Toolbox";
-import { PossibleIssue } from "./Definitions";
 import { useHover } from "../Hooks/useHover";
 import { css } from "@emotion/react";
+import { PossibleIssue, PossibleIssueEvent } from "./PossibleIssue";
 
 export interface IssueWidgetProps {
   issue: PossibleIssue;
@@ -36,19 +36,25 @@ export const IssueWidget: React.FC<IssueWidgetProps> = (
 
   useEffect(() => {
     issue.issueHovering = isHovering;
-    issue.hoverChanged();
   }, [isHovering]);
 
   const [refHovering, setRefHovering] = useState(false);
 
   useEffect(() => {
-    const cb = () => setRefHovering(issue.refHovering);
+    const l = issue.addListener((event: PossibleIssueEvent) => {
+      switch (event) {
+        case PossibleIssueEvent.HOVER: {
+          setRefHovering(issue.refHovering);
+          break;
+        }
+        case PossibleIssueEvent.CLOSE: {
+          l();
+          break;
+        }
+      }
+    });
 
-    issue.hoverListeners.push(cb);
-
-    return () => {
-      issue.hoverListeners = issue.hoverListeners.filter((c) => c !== cb);
-    };
+    return () => l();
   }, []);
 
   return (
@@ -56,6 +62,7 @@ export const IssueWidget: React.FC<IssueWidgetProps> = (
       className={className}
       onClick={clickHighlight}
       ref={issue.issueRef}
+      color={issue.color}
       isHovering={isHovering}
       isFlickering={refHovering}
     >
@@ -75,38 +82,28 @@ namespace S {
   export const Row = styled("tr")<{
     isHovering: boolean;
     isFlickering: boolean;
+    color: string;
   }>`
     font-size: ${FontSizes.MINI}px;
     white-space: pre;
 
-    :nth-of-type(odd) {
-      background-color: ${DefaultColors.Orange}${(p) => (p.isHovering ? "cc" : "aa")};
+    background-color: ${(p) =>
+      p.isHovering ? `${p.color}cc` : `${p.color}aa`};
 
-      animation: ${(p) =>
-        p.isFlickering
-          ? css`0.5s infinite ${BackgroundColorFlicker(
-              DefaultColors.TRANSPARENT,
-              DefaultColors.Orange
-            )}`
-          : null};
-    }
-
-    :nth-of-type(even) {
-      background-color: ${DefaultColors.BrightOrange}${(p) => (p.isHovering ? "cc" : "aa")};
-
-      animation: ${(p) =>
-        p.isFlickering
-          ? css`0.5s infinite ${BackgroundColorFlicker(
-              DefaultColors.TRANSPARENT,
-              DefaultColors.BrightOrange
-            )}`
-          : null};
-    }
+    animation: ${(p) =>
+      p.isFlickering
+        ? css`0.5s infinite ${BackgroundColorFlicker(
+            DefaultColors.TRANSPARENT,
+            p.color
+          )}`
+        : null};
 
     cursor: pointer;
   `;
 
-  export const Pos = styled("td")`
+  export const Cell = styled("td")``;
+
+  export const Pos = styled(Cell)`
     text-align: right;
     padding-right: 10px;
     padding-left: 10px;
@@ -115,8 +112,6 @@ namespace S {
     border-bottom-left-radius: 5px;
   `;
 
-  export const TextCell = styled("td")``;
-
   export const Text = styled("div")`
     padding-right: 5px;
     padding-left: 5px;
@@ -124,18 +119,18 @@ namespace S {
     border-radius: 10px;
   `;
 
-  export const Issue = styled(TextCell)`
+  export const Issue = styled(Cell)`
     color: ${DefaultColors.BrightRed};
   `;
 
-  export const Fix = styled(TextCell)`
+  export const Fix = styled(Cell)`
     color: ${DefaultColors.BrightGreen};
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
     padding-right: 10px;
   `;
 
-  export const Arrow = styled("td")`
+  export const Arrow = styled(Cell)`
     padding-right: 1px;
     padding-left: 1px;
     color: ${DefaultColors.OffWhite};

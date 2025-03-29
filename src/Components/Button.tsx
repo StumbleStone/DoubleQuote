@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { DefaultColors, DefaultStyles } from "./Toolbox";
+import { DefaultColors, DefaultStyles } from "../Toolbox";
 
 export const Button = styled("div")`
   border: 2px solid ${DefaultColors.OffWhite};

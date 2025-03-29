@@ -1,7 +1,5 @@
-import { createRoot } from "react-dom/client";
 import styled from "@emotion/styled";
 import React, { ReactNode } from "react";
-import { DefaultColors, DefaultStyles, FontSizes } from "./Toolbox";
 import { Backdrop } from "./Backdrop";
 import { Tile } from "./Tile";
 
