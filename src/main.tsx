@@ -1,16 +1,15 @@
 import { createRoot } from "react-dom/client";
 import styled from "@emotion/styled";
 import React, { useCallback, useEffect, useState } from "react";
-import { DefaultColors, DefaultStyles, FontSizes } from "./Toolbox";
+import { DefaultColors, FontSizes } from "./Toolbox";
 import { Title } from "./Title";
 import { Button, ButtonContainer } from "./Button";
 import { TextInput } from "./TextInput";
 import { Tile } from "./Tile";
 import { TextRenderer } from "./TextRenderer";
-import { FixRenderer, FixRendererProps } from "./FixRenderer";
+import { FixRenderer } from "./FixRenderer";
 import { debug_text } from "./debugText";
 import { TextScanner } from "./TextScanner/TextScanner";
-import { PossibleIssue } from "./TextScanner/Definitions";
 
 function createMain() {
   const root = createRoot(document.getElementById("app")!);
@@ -39,6 +38,12 @@ const MainPage: React.FC<MainPageProps> = (props: MainPageProps) => {
   return (
     <S.Page>
       <Title text="“DoubleQuote”" />
+      <S.Link
+        target="_blank"
+        href="https://github.com/StumbleStone/DoubleQuote"
+      >
+        Repo
+      </S.Link>
       {text.length > 0 && (
         <S.TextRenderContainer>
           <TextRenderer issues={issues} text={text} />
@@ -65,6 +70,7 @@ const MainPage: React.FC<MainPageProps> = (props: MainPageProps) => {
 
 namespace S {
   export const Page = styled(Tile)`
+    position: relative;
     width: calc(100% - 40px);
     height: calc(100% - 40px);
     margin: 20px;
@@ -84,6 +90,15 @@ namespace S {
     gap: 10px;
     overflow-y: hidden;
     padding: 15px 15px;
+  `;
+
+  export const Link = styled("a")`
+    color: ${DefaultColors.BrightCyan};
+    font-size: ${FontSizes.MINI};
+    padding: 15px 15px;
+    position: absolute;
+    top: 0;
+    left: 0;
   `;
 }
 
