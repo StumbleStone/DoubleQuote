@@ -1,10 +1,9 @@
+import { NotWhitespaceRegex, WhitespaceRegex } from "../../Toolbox";
 import {
   CharSymbols,
-  NotWhitespaceRegex,
   Test,
   TestExecEvent,
   TestFailedResult,
-  WhitespaceRegex,
 } from "../Definitions";
 
 function exec(event: TestExecEvent): true | TestFailedResult {

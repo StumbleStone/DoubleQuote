@@ -1,11 +1,10 @@
 import {
   CharSymbols,
-  NotWhitespaceRegex,
   Test,
   TestExecEvent,
   TestFailedResult,
-  WhitespaceRegex,
 } from "../Definitions";
+import { NotWhitespaceRegex, WhitespaceRegex } from "../../Toolbox";
 
 function exec(event: TestExecEvent): true | TestFailedResult {
   const { char, contextLeft, contextRight } = event;

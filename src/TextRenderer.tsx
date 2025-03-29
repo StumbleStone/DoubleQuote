@@ -11,7 +11,9 @@ import {
   BackgroundColorFlicker,
   BoxShadowFlicker,
   DefaultColors,
+  ENDS_WITH_NEWLINE,
   FontSizes,
+  STARTS_WITH_NEWLINE,
 } from "./Toolbox";
 import { Tile } from "./Tile";
 import { PossibleIssue } from "./TextScanner/Definitions";
@@ -37,25 +39,40 @@ function textBuilder(text: string, issues: PossibleIssue[]): ReactNode[] {
     const prevIssue = issues[i - 1];
     const nextIssue = issues[i + 1];
 
-    let startDelta = Math.min(prevIssue ? issue.pos - prevIssueEndPos : 2, 2);
+    const startDelta = Math.min(
+      prevIssue ? issue.pos - (prevIssueEndPos + 1) : 3,
+      3
+    );
     let issueStartPos = issue.pos - startDelta;
 
-    let endDelta = Math.min(nextIssue ? nextIssue.pos - issue.pos : 2, 2);
+    const endDelta = Math.min(nextIssue ? nextIssue.pos - issue.pos : 3, 3);
     let issueEndPos = issue.pos + endDelta;
 
     let textLeft: string = text.substring(issueStartPos, issue.pos);
-    const trimmedLeft = textLeft.replace(/\n/g, "");
+    const trimmedLeft = trimStartNewline(textLeft);
     if (trimmedLeft !== textLeft) {
       issueStartPos =
         issue.pos - (textLeft.length - (startDelta - trimmedLeft.length));
       textLeft = trimmedLeft;
     }
 
+    //_  .  _  _  "  T  r  u  e  ,  "  _  N  a  b  e  e  h
+    //0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17
+    //           i1
+    //  -3 -2 -1  0  1  2  3 [.__"Tru] [1-7(8)] -> ["Tru][4-7(8)]
+
+    //_  .  _  _  "  T  r  u  e  ,  "  _  N  a  b  e  e  h
+    //0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17
+    //                             i1
+    //                    -3 -2 -1  0  1  2  3 [ue,"_Na] [8-13(14)]
+
+    // [1-7][8-13]
+
     let textRight: string =
       issueEndPos <= issue.pos + 1
         ? ""
         : text.substring(issue.pos + 1, issueEndPos + 1);
-    const trimmedRight = textRight.replace(/\n/g, "");
+    const trimmedRight = trimEndNewline(textRight);
     if (trimmedRight !== textRight) {
       issueEndPos =
         issue.pos + (textRight.length - (endDelta - trimmedRight.length));
@@ -65,11 +82,8 @@ function textBuilder(text: string, issues: PossibleIssue[]): ReactNode[] {
     // // Cause I suck with off-by-one issues
     // textRight = textRight.substring(1);
 
-    parts.push(
-      <S.Text key={`text-${issue.pos}`}>
-        {text.substring(prevIssueEndPos + 1, issueStartPos)}
-      </S.Text>
-    );
+    const plainText = text.substring(prevIssueEndPos + 1, issueStartPos);
+    parts.push(<S.Text key={`text-${issue.pos}`}>{plainText}</S.Text>);
 
     prevIssueEndPos = issueEndPos;
 
@@ -101,12 +115,12 @@ export const TextRenderer: React.FC<TextRendererProps> = (
 
   return (
     <S.Container className={className}>
-      {/* <S.Checkbox
+      <S.Checkbox
         type="checkbox"
         onChange={(ev) => {
           setDebug(() => ev.target.checked);
         }}
-      /> */}
+      />
       <S.scroller>{content}</S.scroller>
     </S.Container>
   );
@@ -212,4 +226,20 @@ namespace S {
     top: 0;
     left: 0;
   `;
+}
+
+function trimEndNewline(str: string): string {
+  if (!str.includes("\n")) {
+    return str;
+  }
+
+  return str.substring(0, str.indexOf("\n"));
+}
+
+function trimStartNewline(str: string): string {
+  if (!str.includes("\n")) {
+    return str;
+  }
+
+  return str.substring(str.lastIndexOf("\n") + 1);
 }

@@ -10,9 +10,6 @@ export enum CharSymbols {
   DOUBLE_QUOTE_FANCY_RIGHT = "”",
 }
 
-export const WhitespaceRegex: RegExp = /\s/;
-export const NotWhitespaceRegex: RegExp = /[^\s]/;
-
 export interface TestExecEvent {
   char: string;
   contextLeft: string;

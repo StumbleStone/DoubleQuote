@@ -36,8 +36,8 @@ export class TextScanner {
     for (let i = 0; i < len; i++) {
       const event: TestExecEvent = {
         char: text[i],
-        contextLeft: text.substring(i - 2, i),
-        contextRight: text.substring(i + 1, i + 3),
+        contextLeft: text.substring(i - 3, i),
+        contextRight: text.substring(i + 1, i + 4),
         pos: i,
       };
 
