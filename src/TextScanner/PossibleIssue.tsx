@@ -1,5 +1,7 @@
-import React, { RefObject } from "react";
+import React, { ReactNode, RefObject } from "react";
 import { Test } from "./Definitions";
+import styled from "@emotion/styled";
+import { DefaultColors } from "../Toolbox";
 
 export interface PossibleIssueOptions {
   pos: number;
@@ -9,10 +11,20 @@ export interface PossibleIssueOptions {
   context: string;
 }
 
+export enum PossibleIssueEvent {
+  HOVER = "hover",
+  CLOSE = "close",
+}
+
+export type PossibleIssueEventListener = (
+  event: PossibleIssueEvent,
+  issue: PossibleIssue
+) => void;
+
 export class PossibleIssue {
   ref: RefObject<HTMLSpanElement>;
   issueRef: RefObject<HTMLTableRowElement>;
-  hoverListeners: (() => void)[];
+  private listeners: PossibleIssueEventListener[];
 
   _refHovering: boolean;
   _issueHovering: boolean;
@@ -28,29 +40,25 @@ export class PossibleIssue {
     this._refHovering = false;
     this._issueHovering = false;
 
-    this.hoverListeners = [];
+    this.listeners = [];
 
-    console.log(
-      `Found [${this.formatDisplayText(
-        options.issue
-      )}] but expected [${this.formatDisplayText(options.fix)}]  ${
-        options.test.name
-      }`
-    );
+    // console.log(
+    //   `Found [${this.formatDisplayText(
+    //     options.issue
+    //   )}] but expected [${this.formatDisplayText(options.fix)}]`
+    // );
   }
 
   private hoverChanged() {
-    this.hoverListeners.forEach((cb) => cb());
+    this.sendEvent(PossibleIssueEvent.HOVER);
+  }
+
+  private sendEvent(event: PossibleIssueEvent) {
+    this.listeners.forEach((cb) => cb(event, this));
   }
 
   private formatDisplayText(text: string): string {
     return text.replace(/\n/g, " ");
-  }
-
-  destroy() {
-    this.hoverListeners = [];
-    (this.ref as any) = null;
-    (this.issueRef as any) = null;
   }
 
   get pos(): number {
@@ -65,8 +73,13 @@ export class PossibleIssue {
   get fix(): string {
     return this.formatDisplayText(this.options.fix);
   }
+
   get context(): string {
     return this.options.context;
+  }
+
+  get color(): string {
+    return this.test.color;
   }
 
   get refHovering(): boolean {
@@ -94,4 +107,48 @@ export class PossibleIssue {
     this._issueHovering = newState;
     this.hoverChanged();
   }
+
+  get description(): ReactNode {
+    return (
+      <S.Description>
+        {"Found "}
+        <S.DescriptionHighlight color={this.color}>
+          {this.formatDisplayText(this.issue)}
+        </S.DescriptionHighlight>
+        {" but expected "}
+        <S.DescriptionHighlight color={this.color}>
+          {this.formatDisplayText(this.fix)}
+        </S.DescriptionHighlight>
+      </S.Description>
+    );
+  }
+
+  get active() {
+    return this.refHovering || this.issueHovering;
+  }
+
+  addListener(cb: PossibleIssueEventListener): () => void {
+    this.listeners.push(cb);
+
+    return () => (this.listeners = this.listeners.filter((l) => l !== cb));
+  }
+
+  destroy() {
+    this.sendEvent(PossibleIssueEvent.CLOSE);
+    this.listeners = [];
+    (this.ref as any) = null;
+    (this.issueRef as any) = null;
+  }
+}
+
+namespace S {
+  export const Description = styled("span")`
+    color: ${DefaultColors.OffWhite};
+  `;
+
+  export const DescriptionHighlight = styled("span")<{ color: string }>`
+    color: ${DefaultColors.Text_Color};
+    border-radius: 5px;
+    background-color: ${(p) => p.color};
+  `;
 }

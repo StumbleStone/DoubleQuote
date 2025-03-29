@@ -4,7 +4,11 @@ import {
   TestExecEvent,
   TestFailedResult,
 } from "../Definitions";
-import { NotWhitespaceRegex, WhitespaceRegex } from "../../Toolbox";
+import {
+  DefaultColors,
+  NotWhitespaceRegex,
+  WhitespaceRegex,
+} from "../../Toolbox";
 
 function exec(event: TestExecEvent): true | TestFailedResult {
   const { char, contextLeft, contextRight } = event;
@@ -27,4 +31,5 @@ function exec(event: TestExecEvent): true | TestFailedResult {
 export const Test_DoubleQuote_FancyLeft: Test = {
   name: "Fancy Left Double Quote Test",
   exec: exec,
+  color: DefaultColors.Orange,
 };

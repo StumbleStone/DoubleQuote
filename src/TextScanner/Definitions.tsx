@@ -25,4 +25,5 @@ export interface TestFailedResult {
 export interface Test {
   name: string;
   exec: (event: TestExecEvent) => true | TestFailedResult;
+  color: string;
 }

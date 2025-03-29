@@ -1,4 +1,8 @@
-import { NotWhitespaceRegex, WhitespaceRegex } from "../../Toolbox";
+import {
+  DefaultColors,
+  NotWhitespaceRegex,
+  WhitespaceRegex,
+} from "../../Toolbox";
 import {
   CharSymbols,
   Test,
@@ -27,4 +31,5 @@ function exec(event: TestExecEvent): true | TestFailedResult {
 export const Test_SingleQuote_FancyRight: Test = {
   name: "Fancy Right Single Quote Test",
   exec: exec,
+  color: DefaultColors.Orange,
 };

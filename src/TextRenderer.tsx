@@ -16,7 +16,7 @@ import {
   STARTS_WITH_NEWLINE,
 } from "./Toolbox";
 import { Tile } from "./Tile";
-import { PossibleIssue } from "./TextScanner/PossibleIssue";
+import { PossibleIssue, PossibleIssueEvent } from "./TextScanner/PossibleIssue";
 import { useHover } from "./Hooks/useHover";
 import { css, keyframes } from "@emotion/react";
 
@@ -144,13 +144,20 @@ export const IssueSpan: React.FC<IssueSpanProps> = (props: IssueSpanProps) => {
   const [issueRefHovering, setIssueRefHovering] = useState(false);
 
   useEffect(() => {
-    const cb = () => setIssueRefHovering(issue.issueHovering);
+    const l = issue.addListener((event: PossibleIssueEvent) => {
+      switch (event) {
+        case PossibleIssueEvent.HOVER: {
+          setIssueRefHovering(issue.issueHovering);
+          break;
+        }
+        case PossibleIssueEvent.CLOSE: {
+          l();
+          break;
+        }
+      }
+    });
 
-    issue.hoverListeners.push(cb);
-
-    return () => {
-      issue.hoverListeners = issue.hoverListeners.filter((c) => c !== cb);
-    };
+    return () => l();
   }, []);
 
   const clickHighlight = useCallback(() => {
@@ -168,6 +175,7 @@ export const IssueSpan: React.FC<IssueSpanProps> = (props: IssueSpanProps) => {
     <S.Issue
       key={issue.pos}
       ref={issue.ref}
+      color={issue.color}
       isHovering={isHovering}
       isFlickering={issueRefHovering}
       onClick={clickHighlight}
@@ -202,11 +210,9 @@ namespace S {
   export const Issue = styled("span")<{
     isHovering: boolean;
     isFlickering: boolean;
+    color: string;
   }>`
-    background-color: ${(p) =>
-      p.isHovering
-        ? DefaultColors.BrightOrange
-        : `${DefaultColors.BrightOrange}aa`};
+    background-color: ${(p) => (p.isHovering ? p.color : `${p.color}aa`)};
     color: ${DefaultColors.Text_Color};
     border-radius: 5px;
     cursor: pointer;
@@ -215,7 +221,7 @@ namespace S {
       p.isFlickering
         ? css`0.5s infinite ${BackgroundColorFlicker(
             DefaultColors.TRANSPARENT,
-            DefaultColors.BrightOrange
+            p.color
           )}`
         : null};
   `;

@@ -47,8 +47,10 @@ namespace S {
 
   export const Table = styled("table")`
     color: ${DefaultColors.Text_Color};
-    border-collapse: collapse;
     margin-right: 5px;
     margin-left: 5px;
+
+    border-collapse: separate;
+    border-spacing: 0 4px;
   `;
 }

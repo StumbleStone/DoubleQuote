@@ -1,3 +1,4 @@
+import { DefaultColors } from "../../Toolbox";
 import {
   CharSymbols,
   Test,
@@ -24,4 +25,5 @@ function exec(event: TestExecEvent): true | TestFailedResult {
 export const Test_SingleQuote: Test = {
   name: "Single Quote Test",
   exec: exec,
+  color: DefaultColors.Orange,
 };

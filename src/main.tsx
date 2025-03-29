@@ -10,6 +10,7 @@ import { TextRenderer } from "./TextRenderer";
 import { FixRenderer } from "./FixRenderer";
 import { debug_text } from "./debugText";
 import { TextScanner } from "./TextScanner/TextScanner";
+import { Info } from "./Info";
 
 function createMain() {
   const root = createRoot(document.getElementById("app")!);
@@ -50,20 +51,23 @@ const MainPage: React.FC<MainPageProps> = (props: MainPageProps) => {
           <FixRenderer issues={issues} />
         </S.TextRenderContainer>
       )}
-      <S.StyledButtonContainer>
-        {!showTextInput && (
-          <Button onClick={() => setShowTextInput(() => true)}>
-            {text.length > 0 ? "Edit Text" : "Start Here!"}
-          </Button>
-        )}
-        {showTextInput && (
-          <TextInput
-            close={() => setShowTextInput(() => false)}
-            startingText={text}
-            setText={handleSetText}
-          />
-        )}
-      </S.StyledButtonContainer>
+      <S.ButtonAndInfoContainer>
+        <S.StyledButtonContainer>
+          {!showTextInput && (
+            <Button onClick={() => setShowTextInput(() => true)}>
+              {text.length > 0 ? "Edit Text" : "Start Here!"}
+            </Button>
+          )}
+        </S.StyledButtonContainer>
+        <Info issues={issues} />
+      </S.ButtonAndInfoContainer>
+      {showTextInput && (
+        <TextInput
+          close={() => setShowTextInput(() => false)}
+          startingText={text}
+          setText={handleSetText}
+        />
+      )}
     </S.Page>
   );
 };
@@ -81,7 +85,14 @@ namespace S {
   `;
 
   export const StyledButtonContainer = styled(ButtonContainer)`
+    flex: 1;
+  `;
+
+  export const ButtonAndInfoContainer = styled("div")`
     padding: 0px 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   `;
 
   export const TextRenderContainer = styled("div")`
