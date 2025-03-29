@@ -1,0 +1,51 @@
+html {
+  text-size-adjust: 100%;
+}
+
+
+body {
+    padding: 0;
+    margin: 0;
+    font-family: monospace;
+    background-color: #b6b6b6;
+    overscroll-behavior: none;
+}
+
+* {
+    font-family: monospace;
+}
+
+div {
+  box-sizing: border-box;
+}
+
+@keyframes heartbeat {
+    0% {opacity: 0;}
+    50% {opacity: 1;}
+    100% {opacity: 0;}
+}
+
+  /* width */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #313840;
+  }
+
+  ::-webkit-scrollbar-corner {
+      background: #313840;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
