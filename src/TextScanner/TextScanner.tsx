@@ -28,7 +28,7 @@ export class TextScanner {
       Test_DoubleQuote_FancyLeft_Missing_Space,
       Test_DoubleQuote_Missing_Space,
       Test_SingleQuote_Fancy_Contraction,
-      Test_SingleQuote_Contraction,
+      // Test_SingleQuote_Contraction,
 
       // Test_SingleQuote,
       Test_SingleQuote_FancyLeft,
